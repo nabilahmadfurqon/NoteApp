@@ -1,3 +1,4 @@
+// NoteAdapter.kt
 package com.example.notes_app
 
 import android.view.LayoutInflater
@@ -6,12 +7,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.notes_app.R
+import com.google.android.material.chip.Chip
 
 class NoteAdapter(
-    private val noteList: List<Note>,
+    private var fullList: List<Note>,
     private val listener: OnNoteClickListener
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+
+    private var filteredList = fullList.toMutableList()
 
     interface OnNoteClickListener {
         fun onNoteClick(position: Int)
@@ -19,7 +22,7 @@ class NoteAdapter(
 
     inner class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvTitle: TextView = itemView.findViewById(R.id.tvNoteTitle)
-        private val tvCategory: TextView = itemView.findViewById(R.id.tvNoteCategory)
+        private val tvCategory: Chip = itemView.findViewById(R.id.tvNoteCategory)
         private val tvContent: TextView = itemView.findViewById(R.id.tvNoteContent)
         private val tvDate: TextView = itemView.findViewById(R.id.tvNoteDate)
 
@@ -38,12 +41,12 @@ class NoteAdapter(
             tvContent.text = note.mainNote
             tvDate.text = "Diperbarui: ${note.updatedAt.substring(0, 10)}"
 
-            // Anda bisa menambahkan warna berbeda untuk kategori berbeda
+            val context = itemView.context
             when (note.categoryName) {
-                "Pekerjaan" -> tvCategory.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.blue))
-                "Pribadi" -> tvCategory.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.green))
-                "Belanja" -> tvCategory.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.orange))
-                else -> tvCategory.setBackgroundColor(ContextCompat.getColor(itemView.context, R.color.gray))
+                "Pekerjaan" -> tvCategory.chipBackgroundColor = ContextCompat.getColorStateList(context, R.color.blue)
+                "Pribadi" -> tvCategory.chipBackgroundColor = ContextCompat.getColorStateList(context, R.color.green)
+                "Belanja" -> tvCategory.chipBackgroundColor = ContextCompat.getColorStateList(context, R.color.orange)
+                else -> tvCategory.chipBackgroundColor = ContextCompat.getColorStateList(context, R.color.gray)
             }
         }
     }
@@ -54,8 +57,30 @@ class NoteAdapter(
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.bind(noteList[position])
+        holder.bind(filteredList[position])
     }
 
-    override fun getItemCount(): Int = noteList.size
+    override fun getItemCount(): Int = filteredList.size
+
+    fun setData(notes: List<Note>) {
+        fullList = notes
+        filteredList = notes.toMutableList()
+        notifyDataSetChanged()
+    }
+
+    fun filter(query: String) {
+        filteredList = if (query.isEmpty()) {
+            fullList.toMutableList()
+        } else {
+            fullList.filter {
+                it.title.contains(query, ignoreCase = true) ||
+                        (it.categoryName?.contains(query, ignoreCase = true) ?: false)
+            }.toMutableList()
+        }
+        notifyDataSetChanged()
+    }
+
+    fun getItemAt(position: Int): Note {
+        return filteredList[position]
+    }
 }

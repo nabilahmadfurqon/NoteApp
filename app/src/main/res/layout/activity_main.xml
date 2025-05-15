@@ -4,27 +4,71 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
+    <!-- Header Section menggunakan AppBarLayout -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingVertical="12dp"
+            android:paddingHorizontal="16dp"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/headerTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Catatan"
+                android:textSize="20sp"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="center_vertical"/>
+
+            <!-- Search View -->
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:queryHint="Cari..."
+                android:iconifiedByDefault="false"
+                app:queryBackground="@android:color/transparent"
+                app:searchHintIcon="@null"
+                android:background="@drawable/searchview_background"
+                app:layout_constraintVertical_bias="0.5"/>
+
+        </LinearLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewNotes"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
-        android:clipToPadding="false"
-        tools:listitem="@layout/item_note"
-        android:contentDescription="Daftar catatan" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:paddingTop="8dp"
+        android:clipToPadding="false"/>
 
+    <!-- Tombol Tambah -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="24dp"
         android:contentDescription="Tambah Catatan"
         android:src="@android:drawable/ic_input_add"
         app:layout_anchor="@id/recyclerViewNotes"
         app:layout_anchorGravity="bottom|end"
         app:backgroundTint="@color/gray"
-        app:tint="@android:color/white" />
+        app:tint="@android:color/white"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
